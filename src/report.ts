@@ -8,11 +8,12 @@ export async function writeReport(comparison: ApiComparison, outPath: string): P
 }
 
 export function renderReport(comparison: ApiComparison): string {
-  const status = comparison.breaking.length > 0
-    ? `Shipline found ${comparison.breaking.length} breaking public API change${plural(comparison.breaking.length)}.`
-    : comparison.compatible.length > 0
-      ? `Shipline found ${comparison.compatible.length} compatible public API addition${plural(comparison.compatible.length)}.`
-      : "Shipline found no public API changes.";
+  const status =
+    comparison.breaking.length > 0
+      ? `Shipline found ${comparison.breaking.length} breaking public API change${plural(comparison.breaking.length)}.`
+      : comparison.compatible.length > 0
+        ? `Shipline found ${comparison.compatible.length} compatible public API addition${plural(comparison.compatible.length)}.`
+        : "Shipline found no public API changes.";
 
   return [
     "# API Drift Report",
@@ -49,19 +50,21 @@ function tableForChanges(changes: ApiChange[], emptyText: string): string {
     return emptyText;
   }
 
-  const rows = [
-    "| Export | Kind | Reason | Before | After |",
-    "| --- | --- | --- | --- | --- |",
-  ];
+  const rows = ["| Export | Kind | Reason | Before | After |", "| --- | --- | --- | --- | --- |"];
 
   for (const change of changes) {
-    rows.push([
-      `\`${escapeCell(change.name)}\``,
-      change.kind,
-      escapeCell(change.reason),
-      change.before ? `\`${escapeCell(change.before.signature)}\`` : "",
-      change.after ? `\`${escapeCell(change.after.signature)}\`` : "",
-    ].join(" | ").replace(/^/, "| ").replace(/$/, " |"));
+    rows.push(
+      [
+        `\`${escapeCell(change.name)}\``,
+        change.kind,
+        escapeCell(change.reason),
+        change.before ? `\`${escapeCell(change.before.signature)}\`` : "",
+        change.after ? `\`${escapeCell(change.after.signature)}\`` : "",
+      ]
+        .join(" | ")
+        .replace(/^/, "| ")
+        .replace(/$/, " |"),
+    );
   }
 
   return rows.join("\n");
@@ -86,10 +89,7 @@ function checklistForImpact(impact: ApiComparison["releaseImpact"]): string {
     ].join("\n");
   }
 
-  return [
-    "- [ ] No public API release action needed.",
-    "- [ ] Continue normal patch release checks.",
-  ].join("\n");
+  return ["- [ ] No public API release action needed.", "- [ ] Continue normal patch release checks."].join("\n");
 }
 
 function escapeCell(value: string): string {

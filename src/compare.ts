@@ -1,8 +1,9 @@
 import { readFile } from "node:fs/promises";
+import { parseApiSnapshot } from "./schema.js";
 import type { ApiChange, ApiComparison, ApiExport, ApiSnapshot } from "./types.js";
 
 export async function readSnapshot(path: string): Promise<ApiSnapshot> {
-  return JSON.parse(await readFile(path, "utf8")) as ApiSnapshot;
+  return parseApiSnapshot(JSON.parse(await readFile(path, "utf8")) as unknown);
 }
 
 export function compareSnapshots(before: ApiSnapshot, after: ApiSnapshot): ApiComparison {

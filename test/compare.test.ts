@@ -29,4 +29,14 @@ describe("compareSnapshots", () => {
       "RequestContext",
     ]);
   });
+
+  it("marks unchanged snapshots as patch impact", async () => {
+    const before = await createSnapshot(join(root, "fixtures/before/package.json"));
+    const after = await createSnapshot(join(root, "fixtures/before/package.json"));
+    const comparison = compareSnapshots(before, after);
+
+    expect(comparison.releaseImpact).toBe("patch");
+    expect(comparison.breaking).toEqual([]);
+    expect(comparison.compatible).toEqual([]);
+  });
 });

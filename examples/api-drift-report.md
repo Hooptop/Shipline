@@ -10,12 +10,12 @@ Shipline found 4 breaking public API changes. Suggested release impact: **major*
 
 ## Breaking Changes
 
-| Export | Kind | Reason | Before | After |
-| --- | --- | --- | --- | --- |
-| `ApiError` | class | Export was removed. | `export class ApiError extends Error { ... }` |  |
-| `ClientOptions` | interface | Public signature changed. | `token?: string` | `token: string` |
-| `createClient` | function | Public signature changed. | `createClient(options)` | `createClient(options, timeoutMs)` |
-| `RequestContext` | interface | Public signature changed. | `requestId` | `requestId, traceId` |
+| Export           | Kind      | Reason                    | Before                                        | After                              |
+| ---------------- | --------- | ------------------------- | --------------------------------------------- | ---------------------------------- |
+| `ApiError`       | class     | Export was removed.       | `export class ApiError extends Error { ... }` |                                    |
+| `ClientOptions`  | interface | Public signature changed. | `token?: string`                              | `token: string`                    |
+| `createClient`   | function  | Public signature changed. | `createClient(options)`                       | `createClient(options, timeoutMs)` |
+| `RequestContext` | interface | Public signature changed. | `requestId`                                   | `requestId, traceId`               |
 
 ## Maintainer Checklist
 

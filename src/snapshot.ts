@@ -68,7 +68,10 @@ async function resolvePackageInfo(entryPath: string): Promise<PackageInfo> {
   };
 }
 
-function resolvePackageEntries(packageRoot: string, packageJson: { exports?: unknown; main?: string; types?: string; typings?: string }): string[] {
+function resolvePackageEntries(
+  packageRoot: string,
+  packageJson: { exports?: unknown; main?: string; types?: string; typings?: string },
+): string[] {
   const candidates = new Set<string>();
   collectExportTargets(packageJson.exports, candidates);
 
@@ -106,7 +109,12 @@ function collectExportTargets(value: unknown, targets: Set<string>): void {
   }
 }
 
-async function collectExports(filePath: string, rootDir: string, seenFiles: Set<string>, exportsByName: Map<string, ApiExport>): Promise<ApiExport[]> {
+async function collectExports(
+  filePath: string,
+  rootDir: string,
+  seenFiles: Set<string>,
+  exportsByName: Map<string, ApiExport>,
+): Promise<ApiExport[]> {
   const absoluteFile = resolve(filePath);
   if (seenFiles.has(absoluteFile)) {
     return [...exportsByName.values()];
@@ -139,9 +147,10 @@ async function collectFromExportDeclaration(
   seenFiles: Set<string>,
   exportsByName: Map<string, ApiExport>,
 ): Promise<void> {
-  const modulePath = statement.moduleSpecifier && ts.isStringLiteral(statement.moduleSpecifier)
-    ? resolveModulePath(dirname(sourceFile.fileName), statement.moduleSpecifier.text)
-    : undefined;
+  const modulePath =
+    statement.moduleSpecifier && ts.isStringLiteral(statement.moduleSpecifier)
+      ? resolveModulePath(dirname(sourceFile.fileName), statement.moduleSpecifier.text)
+      : undefined;
 
   if (modulePath && !statement.exportClause) {
     await collectExports(modulePath, rootDir, seenFiles, exportsByName);
@@ -171,12 +180,17 @@ async function collectFromExportDeclaration(
     const importedName = element.propertyName?.text ?? element.name.text;
     const exportedName = element.name.text;
     const nestedExport = nested.get(importedName);
-    exportsByName.set(exportedName, nestedExport ? { ...nestedExport, name: exportedName } : {
-      name: exportedName,
-      kind: "unknown",
-      sourceFile: normalizePath(relative(rootDir, modulePath)),
-      signature: `export { ${importedName === exportedName ? exportedName : `${importedName} as ${exportedName}`} }`,
-    });
+    exportsByName.set(
+      exportedName,
+      nestedExport
+        ? { ...nestedExport, name: exportedName }
+        : {
+            name: exportedName,
+            kind: "unknown",
+            sourceFile: normalizePath(relative(rootDir, modulePath)),
+            signature: `export { ${importedName === exportedName ? exportedName : `${importedName} as ${exportedName}`} }`,
+          },
+    );
   }
 }
 
@@ -184,23 +198,35 @@ function exportsFromDeclaration(node: ts.Statement, sourceFile: ts.SourceFile, r
   const sourceFilePath = normalizePath(relative(rootDir, sourceFile.fileName));
   const signature = compactSignature(node.getText(sourceFile));
 
-  if ((ts.isFunctionDeclaration(node) || ts.isClassDeclaration(node) || ts.isInterfaceDeclaration(node) || ts.isTypeAliasDeclaration(node)) && node.name) {
-    return [{
-      name: node.name.text,
-      kind: kindForDeclaration(node),
-      sourceFile: sourceFilePath,
-      signature,
-    }];
+  if (
+    (ts.isFunctionDeclaration(node) ||
+      ts.isClassDeclaration(node) ||
+      ts.isInterfaceDeclaration(node) ||
+      ts.isTypeAliasDeclaration(node)) &&
+    node.name
+  ) {
+    return [
+      {
+        name: node.name.text,
+        kind: kindForDeclaration(node),
+        sourceFile: sourceFilePath,
+        signature,
+      },
+    ];
   }
 
   if (ts.isVariableStatement(node)) {
     return node.declarationList.declarations
-      .filter((declaration): declaration is ts.VariableDeclaration & { name: ts.Identifier } => ts.isIdentifier(declaration.name))
+      .filter((declaration): declaration is ts.VariableDeclaration & { name: ts.Identifier } =>
+        ts.isIdentifier(declaration.name),
+      )
       .map((declaration) => ({
         name: declaration.name.text,
         kind: "const" as const,
         sourceFile: sourceFilePath,
-        signature: compactSignature(`export const ${declaration.name.text}${declaration.type ? `: ${declaration.type.getText(sourceFile)}` : ""}`),
+        signature: compactSignature(
+          `export const ${declaration.name.text}${declaration.type ? `: ${declaration.type.getText(sourceFile)}` : ""}`,
+        ),
       }));
   }
 

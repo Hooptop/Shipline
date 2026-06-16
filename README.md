@@ -27,6 +27,15 @@ The core tool works without AI. API-backed features are planned for explanation,
 
 See [Maintainer Workflows](./docs/MAINTAINER_WORKFLOWS.md) and the [Release Checklist](./docs/RELEASE_CHECKLIST.md) for the release and PR review flow.
 
+```mermaid
+flowchart LR
+  A["Committed API baseline"] --> B["Pull request or release branch"]
+  B --> C["Shipline snapshot"]
+  C --> D["Compare public API surface"]
+  D --> E["Markdown drift report"]
+  E --> F["Maintainer release decision"]
+```
+
 ## Quick Start
 
 ```bash
@@ -155,9 +164,7 @@ The deterministic core intentionally works without AI. API credits would add mai
 
 ```bash
 bun install
-bun run typecheck
-bun run test
-bun run build
+bun run verify
 ```
 
 ## Security

@@ -24,28 +24,48 @@ describe("cli", () => {
     const after = join(tempDir, "after.json");
     const report = join(tempDir, "report.md");
 
-    await execFileAsync("node", ["dist/cli.js", "snapshot", "--entry", "fixtures/before/package.json", "--out", before], { cwd: root });
-    await execFileAsync("node", ["dist/cli.js", "snapshot", "--entry", "fixtures/after-compatible/package.json", "--out", after], { cwd: root });
-    await execFileAsync("node", ["dist/cli.js", "compare", "--before", before, "--after", after, "--out", report], { cwd: root });
+    await execFileAsync(
+      "node",
+      ["dist/cli.js", "snapshot", "--entry", "fixtures/before/package.json", "--out", before],
+      { cwd: root },
+    );
+    await execFileAsync(
+      "node",
+      ["dist/cli.js", "snapshot", "--entry", "fixtures/after-compatible/package.json", "--out", after],
+      { cwd: root },
+    );
+    await execFileAsync("node", ["dist/cli.js", "compare", "--before", before, "--after", after, "--out", report], {
+      cwd: root,
+    });
 
     await expect(readFile(report, "utf8")).resolves.toContain("Suggested release impact: **minor**");
   });
 
   it("exits non-zero when breaking changes are configured to fail", async () => {
     const before = join(tempDir, "before.json");
-    await execFileAsync("node", ["dist/cli.js", "snapshot", "--entry", "fixtures/before/package.json", "--out", before], { cwd: root });
+    await execFileAsync(
+      "node",
+      ["dist/cli.js", "snapshot", "--entry", "fixtures/before/package.json", "--out", before],
+      { cwd: root },
+    );
 
-    await expect(execFileAsync("node", [
-      "dist/cli.js",
-      "check",
-      "--baseline",
-      before,
-      "--entry",
-      "fixtures/after-breaking/package.json",
-      "--out",
-      join(tempDir, "report.md"),
-      "--fail-on",
-      "breaking",
-    ], { cwd: root })).rejects.toMatchObject({ code: 1 });
+    await expect(
+      execFileAsync(
+        "node",
+        [
+          "dist/cli.js",
+          "check",
+          "--baseline",
+          before,
+          "--entry",
+          "fixtures/after-breaking/package.json",
+          "--out",
+          join(tempDir, "report.md"),
+          "--fail-on",
+          "breaking",
+        ],
+        { cwd: root },
+      ),
+    ).rejects.toMatchObject({ code: 1 });
   });
 });
