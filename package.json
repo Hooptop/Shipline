@@ -1,0 +1,52 @@
+{
+  "name": "shipline",
+  "version": "0.1.0",
+  "description": "Detect accidental public API changes in JavaScript and TypeScript packages before release.",
+  "homepage": "https://github.com/Hooptop/Shipline#readme",
+  "bugs": {
+    "url": "https://github.com/Hooptop/Shipline/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Hooptop/Shipline.git"
+  },
+  "type": "module",
+  "bin": {
+    "shipline": "./dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "shipline": "node dist/cli.js",
+    "prepack": "bun run build"
+  },
+  "keywords": [
+    "api",
+    "typescript",
+    "semver",
+    "maintainer",
+    "github-actions",
+    "release",
+    "pull-request",
+    "changelog"
+  ],
+  "author": "",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "typescript": "^5.9.3"
+  },
+  "devDependencies": {
+    "@types/node": "^22.19.17",
+    "vitest": "^4.1.8"
+  }
+}

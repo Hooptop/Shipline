@@ -1,0 +1,23 @@
+name: API Drift
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  api-drift:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install --frozen-lockfile
+      - run: bun run build
+      - run: bun run shipline snapshot --entry fixtures/before/package.json --out tmp/baseline.json
+      - run: bun run shipline check --baseline tmp/baseline.json --entry fixtures/after-compatible/package.json --out api-drift-report.md --fail-on breaking
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: api-drift-report
+          path: api-drift-report.md
