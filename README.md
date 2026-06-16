@@ -25,7 +25,7 @@ The core tool works without AI. API-backed features are planned for explanation,
 3. Review the generated API drift report.
 4. Confirm intentional breaking changes and update migration notes before publishing.
 
-See [Maintainer Workflows](./docs/MAINTAINER_WORKFLOWS.md) for the release and PR review flow.
+See [Maintainer Workflows](./docs/MAINTAINER_WORKFLOWS.md) and the [Release Checklist](./docs/RELEASE_CHECKLIST.md) for the release and PR review flow.
 
 ## Quick Start
 
