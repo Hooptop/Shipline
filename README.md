@@ -6,6 +6,8 @@ Maintainer automation for catching breaking API changes, reviewing PR risk, and 
 
 Shipline is a CLI and GitHub Action workflow for open-source maintainers. It snapshots a package's public API, compares it during pull requests or releases, and writes a review-ready Markdown report with breaking changes, compatible additions, and suggested release impact.
 
+It is built for the part of maintenance that usually happens late in the release cycle: a maintainer is reviewing a PR, checking the changelog, deciding whether the next version is patch, minor, or major, and trying not to miss a subtle exported API change. Shipline turns that review into a repeatable check.
+
 ## Why Maintainers Use It
 
 Accidental API breaks are easy to miss in busy pull request queues. This tool gives maintainers a deterministic release check before they publish:
@@ -17,6 +19,8 @@ Accidental API breaks are easy to miss in busy pull request queues. This tool gi
 - create a maintainer checklist for reviews and changelogs
 
 The core tool works without AI. API-backed features are planned for explanation, migration notes, changelog entries, and PR review comments.
+
+Shipline's bias is to keep the release gate explainable. Static analysis produces the report; future AI features should help maintainers explain and act on that report, not replace it.
 
 ## Maintainer Workflow
 
