@@ -160,6 +160,10 @@ The deterministic core intentionally works without AI. API credits would add mai
 - summarize downstream compatibility risk
 - convert raw reports into release guidance for contributors and users
 
+## Roadmap Starters
+
+The first maintainer roadmap issues are captured in [Starter Issues](./docs/STARTER_ISSUES.md) for PR commenting, migration-note drafts, and monorepo package baselines.
+
 ## Development
 
 ```bash
