@@ -50,6 +50,8 @@ bun run shipline snapshot --entry fixtures/after-breaking/package.json --out tmp
 bun run shipline compare --before tmp/before.json --after tmp/after.json --out tmp/report.md
 ```
 
+Shipline also dogfoods itself. The repository includes a committed `api-snapshot.json` baseline and an API Drift workflow that checks Shipline's own public exports on pull requests. See [Dogfooding Shipline](./docs/DOGFOODING.md).
+
 ## CLI
 
 ```bash
@@ -173,6 +175,13 @@ The first maintainer roadmap issues are captured in [Starter Issues](./docs/STAR
 ```bash
 bun install
 bun run verify
+```
+
+To intentionally update Shipline's own public API baseline:
+
+```bash
+bun run build
+bun run snapshot:self
 ```
 
 ## Security

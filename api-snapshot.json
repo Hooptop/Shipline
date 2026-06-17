@@ -1,0 +1,87 @@
+{
+  "schemaVersion": 1,
+  "packageName": "shipline",
+  "packageVersion": "0.1.0",
+  "generatedAt": "2026-06-17T00:56:30.316Z",
+  "entry": "package.json",
+  "exports": [
+    {
+      "name": "ApiChange",
+      "kind": "unknown",
+      "sourceFile": "dist/types.js",
+      "signature": "export { ApiChange }"
+    },
+    {
+      "name": "ApiComparison",
+      "kind": "unknown",
+      "sourceFile": "dist/types.js",
+      "signature": "export { ApiComparison }"
+    },
+    {
+      "name": "ApiExport",
+      "kind": "unknown",
+      "sourceFile": "dist/types.js",
+      "signature": "export { ApiExport }"
+    },
+    {
+      "name": "apiExportSchema",
+      "kind": "const",
+      "sourceFile": "dist/schema.js",
+      "signature": "export const apiExportSchema"
+    },
+    {
+      "name": "ApiSnapshot",
+      "kind": "unknown",
+      "sourceFile": "dist/types.js",
+      "signature": "export { ApiSnapshot }"
+    },
+    {
+      "name": "apiSnapshotSchema",
+      "kind": "const",
+      "sourceFile": "dist/schema.js",
+      "signature": "export const apiSnapshotSchema"
+    },
+    {
+      "name": "compareSnapshots",
+      "kind": "function",
+      "sourceFile": "dist/compare.js",
+      "signature": "export function compareSnapshots(before, after) { const beforeByName = indexByName(before.exports); const afterByName = indexByName(after.exports); const breaking = []; const compatible = []; const informational = []; for (const [name, beforeExport] of beforeByName) { const afterExport = afterByName.get(name); if (!afterExport) { breaking.push({ name, kind: beforeExport.kind, before: beforeExport, reason: \"Export was removed.\", }); continue; } if (beforeExport.kind !== afterExport.kind || beforeExport.signature !== afterExport.signature) { breaking.push({ name, kind: afterExport.kind, before: beforeExport, after: afterExport, reason: \"Public signature changed.\", }); continue; } if (beforeExport.sourceFile !== afterExport.sourceFile) { informational.push({ name, kind: afterExport.kind, before: beforeExport, after: afterExport, reason: \"Export source file changed without a signature change.\", }); } } for (const [name, afterExport] of afterByName) { if (!beforeByName.has(name)) { compatible.push({ name, kind: afterExport.kind, after: afterExport, reason: \"Export was added.\", }); } } return { beforePackage: `${before.packageName}@${before.packageVersion}`, afterPackage: `${after.packageName}@${after.packageVersion}`, breaking: sortChanges(breaking), compatible: sortChanges(compatible), informational: sortChanges(informational), releaseImpact: breaking.length > 0 ? \"major\" : compatible.length > 0 ? \"minor\" : \"patch\", }; }"
+    },
+    {
+      "name": "createSnapshot",
+      "kind": "function",
+      "sourceFile": "dist/snapshot.js",
+      "signature": "export async function createSnapshot(entryPath, outPath) { const absoluteEntry = resolve(entryPath); const packageInfo = await resolvePackageInfo(absoluteEntry); const seenFiles = new Set(); const exportsByName = new Map(); for (const entry of packageInfo.entries) { await collectExports(entry, packageInfo.rootDir, seenFiles, exportsByName); } const snapshot = { schemaVersion: 1, packageName: packageInfo.packageName, packageVersion: packageInfo.packageVersion, generatedAt: new Date().toISOString(), entry: normalizePath(relative(packageInfo.rootDir, absoluteEntry)), exports: [...exportsByName.values()].sort((a, b) => a.name.localeCompare(b.name)), }; if (outPath) { await writeFile(outPath, `${JSON.stringify(snapshot, null, 2)}\\n`, \"utf8\"); } return snapshot; }"
+    },
+    {
+      "name": "ExportKind",
+      "kind": "unknown",
+      "sourceFile": "dist/types.js",
+      "signature": "export { ExportKind }"
+    },
+    {
+      "name": "parseApiSnapshot",
+      "kind": "function",
+      "sourceFile": "dist/schema.js",
+      "signature": "export function parseApiSnapshot(value) { return apiSnapshotSchema.parse(value); }"
+    },
+    {
+      "name": "readSnapshot",
+      "kind": "function",
+      "sourceFile": "dist/compare.js",
+      "signature": "export async function readSnapshot(path) { return parseApiSnapshot(JSON.parse(await readFile(path, \"utf8\"))); }"
+    },
+    {
+      "name": "renderReport",
+      "kind": "function",
+      "sourceFile": "dist/report.js",
+      "signature": "export function renderReport(comparison) { const status = comparison.breaking.length > 0 ? `Shipline found ${comparison.breaking.length} breaking public API change${plural(comparison.breaking.length)}.` : comparison.compatible.length > 0 ? `Shipline found ${comparison.compatible.length} compatible public API addition${plural(comparison.compatible.length)}.` : \"Shipline found no public API changes.\"; return [ \"# API Drift Report\", \"\", `${status} Suggested release impact: **${comparison.releaseImpact}**.`, \"\", `- Before: \\`${comparison.beforePackage}\\``, `- After: \\`${comparison.afterPackage}\\``, `- Breaking changes: ${comparison.breaking.length}`, `- Compatible additions: ${comparison.compatible.length}`, `- Informational changes: ${comparison.informational.length}`, \"\", \"## Breaking Changes\", \"\", tableForChanges(comparison.breaking, \"No breaking changes detected.\"), \"\", \"## Compatible Additions\", \"\", tableForChanges(comparison.compatible, \"No compatible additions detected.\"), \"\", \"## Informational Changes\", \"\", tableForChanges(comparison.informational, \"No informational changes detected.\"), \"\", \"## Maintainer Checklist\", \"\", checklistForImpact(comparison.releaseImpact), \"\", ].join(\"\\n\"); }"
+    },
+    {
+      "name": "writeReport",
+      "kind": "function",
+      "sourceFile": "dist/report.js",
+      "signature": "export async function writeReport(comparison, outPath) { const markdown = renderReport(comparison); await writeFile(outPath, markdown, \"utf8\"); return markdown; }"
+    }
+  ]
+}

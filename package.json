@@ -11,6 +11,12 @@
     "url": "git+https://github.com/Hooptop/Shipline.git"
   },
   "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
   "bin": {
     "shipline": "./dist/cli.js"
   },
@@ -28,6 +34,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "shipline": "node dist/cli.js",
+    "snapshot:self": "node dist/cli.js snapshot --entry package.json --out api-snapshot.json",
     "prepack": "bun run build"
   },
   "keywords": [
